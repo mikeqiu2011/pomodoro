@@ -7,15 +7,23 @@ RED = "#e7305b"
 GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
-WORK_MIN = 1
-SHORT_BREAK_MIN = 1
-LONG_BREAK_MIN = 1
+WORK_MIN = 25
+SHORT_BREAK_MIN = 5
+LONG_BREAK_MIN = 20
 reps = 0
+timer = None
 
 
 # ---------------------------- TIMER RESET ------------------------------- #
 
-# ---------------------------- TIMER MECHANISM ------------------------------- # 
+def reset():
+    global reps
+    reps = 0
+    window.after_cancel(timer)
+    lbl_timer.config(text='Timer', fg=GREEN)
+    lbl_tick.config(text='')
+    canvas.itemconfig(txt_timer, text='00:00')
+
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 
@@ -33,11 +41,12 @@ def conv_sec_to_min(seconds):
 
 
 def count_down(count):
+    global timer
     global reps
     canvas.itemconfig(txt_timer, text=conv_sec_to_min(count))
 
     if count >= 1:
-        window.after(1000, count_down, count - 1)
+        timer = window.after(1000, count_down, count - 1)
     else:
         num = math.ceil(reps / 2)
         lbl_tick.config(text='✓' * num)
@@ -79,7 +88,7 @@ btn_start.grid(row=2, column=0)
 lbl_tick = Label(fg=GREEN, bg=YELLOW)
 lbl_tick.grid(row=2, column=1)
 
-btn_reset = Button(text='Reset', bg=YELLOW, highlightthickness=0)
+btn_reset = Button(text='Reset', bg=YELLOW, command=reset)
 btn_reset.grid(row=2, column=2)
 
 canvas = Canvas(width=200, height=224, background=YELLOW, highlightthickness=0)
