@@ -1,3 +1,4 @@
+import math
 from tkinter import *
 
 # ---------------------------- CONSTANTS ------------------------------- #
@@ -7,8 +8,8 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 WORK_MIN = 1
-SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 20
+SHORT_BREAK_MIN = 1
+LONG_BREAK_MIN = 1
 reps = 0
 
 
@@ -32,11 +33,14 @@ def conv_sec_to_min(seconds):
 
 
 def count_down(count):
+    global reps
     canvas.itemconfig(txt_timer, text=conv_sec_to_min(count))
 
     if count >= 1:
         window.after(1000, count_down, count - 1)
     else:
+        num = math.ceil(reps / 2)
+        lbl_tick.config(text='✓' * num)
         start_timer()
 
 
@@ -49,6 +53,7 @@ def start_timer():
     long_break_sec = LONG_BREAK_MIN * 60
 
     if reps % 8 == 0:
+        reps = 0
         lbl_timer.config(fg=RED, text='Long break')
         count_down(long_break_sec)
     elif reps % 2 == 0:
@@ -57,8 +62,6 @@ def start_timer():
     else:
         lbl_timer.config(fg=PINK, text='Work hard')
         count_down(work_sec)
-
-
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -72,7 +75,8 @@ lbl_timer.grid(row=0, column=1)
 btn_start = Button(text='Start', command=start_timer)
 btn_start.grid(row=2, column=0)
 
-lbl_tick = Label(text='✓', fg=GREEN, bg=YELLOW)
+# text='✓'
+lbl_tick = Label(fg=GREEN, bg=YELLOW)
 lbl_tick.grid(row=2, column=1)
 
 btn_reset = Button(text='Reset', bg=YELLOW, highlightthickness=0)
